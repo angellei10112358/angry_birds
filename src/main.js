@@ -151,7 +151,6 @@ function onPointerUp() {
 
   if (dist < 5) {
     resetBirdToAnchor();
-    state = State.READY;
     return;
   }
 
@@ -160,8 +159,8 @@ function onPointerUp() {
   const vy = (dy / dist) * vScale;
 
   if (activeBird) {
-    Matter.Body.setStatic(activeBird, false);
     Matter.Body.setVelocity(activeBird, { x: vx, y: vy });
+    Matter.Composite.add(getWorld(), activeBird);
     activeBird.isActive = true;
     canActivateAbility = true;
     flyingBirds = [activeBird];
@@ -177,6 +176,7 @@ function resetBirdToAnchor() {
     Matter.Body.setPosition(activeBird, { x: ANCHOR.x, y: ANCHOR.y });
     Matter.Body.setVelocity(activeBird, { x: 0, y: 0 });
   }
+  state = State.READY;
 }
 
 function activateBirdAbility(bird) {
@@ -272,8 +272,7 @@ function placeNextBird() {
   if (activeBird) {
     Matter.Body.setPosition(activeBird, { x: ANCHOR.x, y: ANCHOR.y });
     Matter.Body.setVelocity(activeBird, { x: 0, y: 0 });
-    Matter.Body.setStatic(activeBird, true);
-    Matter.Composite.add(getWorld(), activeBird);
+    // Don't add to world until launch — bird is "ghosted" on slingshot
     state = State.READY;
   }
 }
@@ -424,6 +423,14 @@ function render() {
   for (const body of bodies) {
     if (body.label === 'ground' || body.label === 'wall') continue;
     drawBody(body);
+  }
+
+  // Draw bird on slingshot (not in world yet)
+  if ((state === State.READY || state === State.AIMING) && activeBird) {
+    const bx = state === State.AIMING ? activeBird.position.x : ANCHOR.x;
+    const by = state === State.AIMING ? activeBird.position.y : ANCHOR.y;
+    Matter.Body.setPosition(activeBird, { x: bx, y: by });
+    drawBody(activeBird);
   }
 
   if (state === State.AIMING && isDragging && dragCurrent && activeBird) {
