@@ -5,7 +5,7 @@ import {
   BIRD_TYPES,
   STAR_3, STAR_2, STAR_1, DEBUG,
 } from './config.js';
-import { initPhysics, stepPhysics, clearWorld, getWorld, drainEvents } from './physics.js';
+import { initPhysics, stepPhysics, clearWorld, getWorld, getEngine, drainEvents, clampSpeeds } from './physics.js';
 import { createBird, createBlock, createPig } from './entities.js';
 import { LEVELS } from './levels.js';
 import { playLaunch, playHit, playBreak, playPigDeath, playWin, playLose } from './audio.js';
@@ -160,6 +160,7 @@ function onPointerUp() {
   const vy = (dy / dist) * vScale;
 
   if (activeBird) {
+    Matter.Body.setStatic(activeBird, false);
     Matter.Body.setVelocity(activeBird, { x: vx, y: vy });
     activeBird.isActive = true;
     canActivateAbility = true;
@@ -242,6 +243,7 @@ function loadLevel(idx) {
     birdQueue.push(createBird(type, ANCHOR.x, ANCHOR.y));
   }
 
+  const engine = getEngine();
   const world = getWorld();
   for (const bd of lvl.blocks) {
     Matter.Composite.add(world, createBlock(bd.x, bd.y, bd.w, bd.h, bd.material, bd.angle || 0));
@@ -249,6 +251,13 @@ function loadLevel(idx) {
   for (const pd of lvl.pigs) {
     Matter.Composite.add(world, createPig(pd.x, pd.y, pd.r || 18));
   }
+
+  // Stabilize: let all blocks/pigs settle before game starts
+  for (let i = 0; i < 120; i++) {
+    Matter.Engine.update(engine, 1000 / 60);
+  }
+  clampSpeeds();
+  drainEvents();
 
   placeNextBird();
 }
@@ -263,6 +272,7 @@ function placeNextBird() {
   if (activeBird) {
     Matter.Body.setPosition(activeBird, { x: ANCHOR.x, y: ANCHOR.y });
     Matter.Body.setVelocity(activeBird, { x: 0, y: 0 });
+    Matter.Body.setStatic(activeBird, true);
     Matter.Composite.add(getWorld(), activeBird);
     state = State.READY;
   }

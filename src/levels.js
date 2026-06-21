@@ -1,73 +1,75 @@
-// Level 1: Simple — 1 pig, few wood blocks
-// Level 2: Medium — 2 pigs, glass + wood structure
-// Level 3: Hard — 3 pigs, stone + wood + glass, taller structure
+// All blocks sit on the ground (y=660) or on blocks below them.
+// Bottom face of every block must touch the block/ground below it.
+// Pig at y=660-r sits on ground.
 
 export const LEVELS = [
   {
+    // Simple hut: two pillars + roof, pig inside
     name: 'First Flight',
     birds: ['red'],
     blocks: [
-      { x: 900, y: 620, w: 80, h: 20, material: 'wood' },
-      { x: 900, y: 560, w: 20, h: 80, material: 'wood', angle: 0 },
-      { x: 960, y: 560, w: 20, h: 80, material: 'wood', angle: 0 },
-      { x: 930, y: 500, w: 60, h: 15, material: 'wood' },
+      { x: 905, y: 645, w: 20, h: 30, material: 'wood' },
+      { x: 955, y: 645, w: 20, h: 30, material: 'wood' },
+      { x: 930, y: 625, w: 70, h: 10, material: 'wood' },
     ],
     pigs: [
-      { x: 930, y: 640, r: 18 },
+      { x: 930, y: 642, r: 18 },
     ],
+    D_far: 955,
   },
   {
+    // Two huts connected by a glass bridge
     name: 'Double Trouble',
     birds: ['red', 'yellow'],
     blocks: [
-      // Left pillar
-      { x: 850, y: 620, w: 20, h: 60, material: 'wood' },
-      { x: 890, y: 620, w: 20, h: 60, material: 'wood' },
-      { x: 870, y: 580, w: 50, h: 15, material: 'glass' },
-      // Right pillar
-      { x: 980, y: 620, w: 20, h: 60, material: 'wood' },
-      { x: 1020, y: 620, w: 20, h: 60, material: 'wood' },
-      { x: 1000, y: 580, w: 50, h: 15, material: 'glass' },
-      // Top bridge
-      { x: 935, y: 540, w: 110, h: 15, material: 'wood' },
-      // Small hut on top
-      { x: 920, y: 500, w: 15, h: 40, material: 'glass', angle: 0 },
-      { x: 950, y: 500, w: 15, h: 40, material: 'glass', angle: 0 },
-      { x: 935, y: 470, w: 40, h: 12, material: 'glass' },
+      // Left hut walls (wood)
+      { x: 855, y: 645, w: 16, h: 30, material: 'wood' },
+      { x: 895, y: 645, w: 16, h: 30, material: 'wood' },
+      { x: 875, y: 625, w: 56, h: 10, material: 'wood' },
+      // Right hut walls (wood)
+      { x: 990, y: 645, w: 16, h: 30, material: 'wood' },
+      { x: 1030, y: 645, w: 16, h: 30, material: 'wood' },
+      { x: 1010, y: 625, w: 56, h: 10, material: 'wood' },
+      // Glass bridge between huts (supported by wall tops at y=610)
+      { x: 943, y: 605, w: 64, h: 8, material: 'glass' },
     ],
     pigs: [
-      { x: 870, y: 642, r: 18 },
-      { x: 1000, y: 642, r: 18 },
+      { x: 875, y: 642, r: 18 },
+      { x: 1010, y: 642, r: 18 },
     ],
+    D_far: 1030,
   },
   {
+    // Stone fortress: two chambers, pig on each floor
     name: 'Fortress',
     birds: ['red', 'yellow', 'blue'],
     blocks: [
-      // Outer walls (stone)
-      { x: 880, y: 620, w: 25, h: 60, material: 'stone' },
-      { x: 920, y: 620, w: 25, h: 60, material: 'stone' },
-      { x: 980, y: 620, w: 25, h: 60, material: 'stone' },
-      { x: 1020, y: 620, w: 25, h: 60, material: 'stone' },
-      // Floor
-      { x: 950, y: 585, w: 170, h: 15, material: 'stone' },
-      // Inner glass walls
-      { x: 910, y: 540, w: 15, h: 50, material: 'glass' },
-      { x: 990, y: 540, w: 15, h: 50, material: 'glass' },
-      // Middle floor
-      { x: 950, y: 505, w: 100, h: 12, material: 'wood' },
-      // Top structure
-      { x: 935, y: 470, w: 15, h: 35, material: 'glass' },
-      { x: 965, y: 470, w: 15, h: 35, material: 'glass' },
-      { x: 950, y: 445, w: 45, h: 10, material: 'glass' },
-      // Roof decoration
-      { x: 950, y: 410, w: 30, h: 10, material: 'wood' },
+      // Left chamber walls
+      { x: 870, y: 645, w: 20, h: 30, material: 'stone' },
+      { x: 920, y: 645, w: 20, h: 30, material: 'stone' },
+      // Left chamber roof (stone)
+      { x: 895, y: 625, w: 70, h: 12, material: 'stone' },
+      // Right chamber walls
+      { x: 980, y: 645, w: 20, h: 30, material: 'stone' },
+      { x: 1030, y: 645, w: 20, h: 30, material: 'stone' },
+      // Right chamber roof (stone)
+      { x: 1005, y: 625, w: 70, h: 12, material: 'stone' },
+      // 2nd floor left — glass walls on left chamber roof (roof top y=619)
+      { x: 885, y: 602, w: 14, h: 34, material: 'glass' },
+      { x: 915, y: 602, w: 14, h: 34, material: 'glass' },
+      // 2nd floor right — glass walls on right chamber roof
+      { x: 990, y: 602, w: 14, h: 34, material: 'glass' },
+      { x: 1020, y: 602, w: 14, h: 34, material: 'glass' },
+      // 2nd floor roofs (glass)
+      { x: 900, y: 580, w: 44, h: 10, material: 'glass' },
+      { x: 1005, y: 580, w: 44, h: 10, material: 'glass' },
     ],
     pigs: [
-      { x: 950, y: 640, r: 20 },
-      { x: 900, y: 558, r: 16 },
-      { x: 1000, y: 558, r: 16 },
+      { x: 895, y: 642, r: 18 },
+      { x: 1005, y: 642, r: 18 },
+      { x: 950, y: 642, r: 20 },
     ],
+    D_far: 1030,
   },
 ];
 
