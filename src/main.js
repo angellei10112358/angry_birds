@@ -8,6 +8,7 @@ import {
 import { initPhysics, stepPhysics, clearWorld, getWorld, drainEvents } from './physics.js';
 import { createBird, createBlock, createPig } from './entities.js';
 import { LEVELS } from './levels.js';
+import { playLaunch, playHit, playBreak, playPigDeath, playWin, playLose } from './audio.js';
 import {
   getCanvas,
   clearCanvas, drawBackground, drawSlingshot, drawRubberBands,
@@ -163,6 +164,7 @@ function onPointerUp() {
     activeBird.isActive = true;
     canActivateAbility = true;
     flyingBirds = [activeBird];
+    playLaunch();
   }
   state = State.FLYING;
   settleTimer = 0;
@@ -316,9 +318,12 @@ function update() {
         if (body.hp <= 0) {
           spawnParticles(body.position.x, body.position.y,
             body.renderData?.color || '#888', 8);
+          if (body.label === 'pig') playPigDeath();
+          else playBreak();
           try { Matter.Composite.remove(getWorld(), body); } catch (e) {}
         } else {
           spawnParticles(body.position.x, body.position.y, '#aaa', 2);
+          playHit();
         }
       }
     }
@@ -374,6 +379,7 @@ function checkWinLose() {
 
   if (pigsAlive === 0) {
     state = State.WON;
+    playWin();
     const remaining = birdQueue.length - birdIndex - 1;
     const total = birdQueue.length;
     const ratio = total > 0 ? remaining / total : 0;
@@ -386,6 +392,7 @@ function checkWinLose() {
     birdIndex++;
     if (birdIndex >= birdQueue.length) {
       state = State.LOST;
+      playLose();
     } else {
       placeNextBird();
     }
